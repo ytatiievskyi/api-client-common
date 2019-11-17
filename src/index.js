@@ -1,15 +1,21 @@
-import axios from 'axios'
+import defaultProviders from './providers'
 
 export default class ApiClient {
-  constructor(options = {}) {
-    // const { store = {} } = options
+  constructor(settings = {}) {
+    const {
+      store = {},
+      providers = {},
+      auth = {}
+    } = settings
 
-    this.client = options.client || axios.create()
-    this.accessToken = options.accessToken
-    this.refreshToken = options.refreshToken
+    this.providers = providers
+    this.accessToken = settings.accessToken
+    this.refreshToken = settings.refreshToken
     this.refreshRequest = null
 
-    this.client.interceptors.request.use(
+    this.init()
+
+    this.providers.http.interceptors.request.use(
       config => {
         // const token = store.accessToken
         if (!this.accessToken) {
@@ -27,7 +33,7 @@ export default class ApiClient {
       e => Promise.reject(e)
     )
 
-    this.client.interceptors.response.use(
+    this.providers.http.interceptors.response.use(
       r => r,
       async error => {
         if (
@@ -39,7 +45,7 @@ export default class ApiClient {
         }
 
         if (!this.refreshRequest) {
-          this.refreshRequest = this.client.post('/auth/refresh', {
+          this.refreshRequest = this.providers.http.post('/auth/refresh', {
             refreshToken: this.refreshToken,
           })
         }
@@ -51,13 +57,20 @@ export default class ApiClient {
           retry: true,
         }
 
-        return this.client(newRequest)
+        return this.providers.http(newRequest)
       }
     )
   }
 
+  init() {
+    const { http } = defaultProviders
+    if (this.providers.http == null) {
+      this.providers.http = http
+    }
+  }
+
   async signIn({ login, password }) {
-    const { data } = await this.client.post('/auth/login', { login, password })
+    const { data } = await this.providers.http.post('/auth/login', { login, password })
     this.accessToken = data.accessToken
     this.refreshToken = data.refreshToken
   }
@@ -68,6 +81,6 @@ export default class ApiClient {
   }
 
   healthCheck() {
-    return this.client('/test').then(({ data }) => data)
+    return this.providers.http('/test').then(({ data }) => data)
   }
 }
