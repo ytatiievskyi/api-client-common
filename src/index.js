@@ -8,17 +8,15 @@ export default class ApiClient {
       auth = {}
     } = settings
 
+    this.store = store
     this.providers = providers
-    this.accessToken = settings.accessToken
-    this.refreshToken = settings.refreshToken
     this.refreshRequest = null
 
     this.init()
 
     this.providers.http.interceptors.request.use(
       config => {
-        // const token = store.accessToken
-        if (!this.accessToken) {
+        if (!this.store.accessToken) {
           return config
         }
 
@@ -27,7 +25,7 @@ export default class ApiClient {
           ...config,
         }
 
-        newConfig.headers.Authorization = `Bearer ${this.accessToken}`
+        newConfig.headers.Authorization = `Bearer ${this.store.accessToken}`
         return newConfig
       },
       e => Promise.reject(e)
@@ -37,7 +35,7 @@ export default class ApiClient {
       r => r,
       async error => {
         if (
-          !this.refreshToken ||
+          !this.store.refreshToken ||
           error.response.status !== 401 ||
           error.config.retry
         ) {
@@ -46,12 +44,12 @@ export default class ApiClient {
 
         if (!this.refreshRequest) {
           this.refreshRequest = this.providers.http.post('/auth/refresh', {
-            refreshToken: this.refreshToken,
+            refreshToken: this.store.refreshToken,
           })
         }
         const { data } = await this.refreshRequest
-        this.accessToken = data.accessToken
-        this.refreshToken = data.refreshToken
+        this.store.accessToken = data.accessToken
+        this.store.refreshToken = data.refreshToken
         const newRequest = {
           ...error.config,
           retry: true,
@@ -67,17 +65,19 @@ export default class ApiClient {
     if (this.providers.http == null) {
       this.providers.http = http
     }
+    // this.store.accessToken = null
+    // this.store.refreshToken = null
   }
 
   async signIn({ login, password }) {
     const { data } = await this.providers.http.post('/auth/login', { login, password })
-    this.accessToken = data.accessToken
-    this.refreshToken = data.refreshToken
+    this.store.accessToken = data.accessToken
+    this.store.refreshToken = data.refreshToken
   }
 
   signOut() {
-    this.accessToken = null
-    this.refreshToken = null
+    this.store.accessToken = null
+    this.store.refreshToken = null
   }
 
   healthCheck() {
