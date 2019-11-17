@@ -5,14 +5,14 @@ import MockAdapter from 'axios-mock-adapter'
 import ApiClient from '../src'
 
 test.beforeEach(t => {
-  const client = axios.create()
-  t.context.mock = new MockAdapter(client)
-  t.context.api = new ApiClient({ client })
+  const http = axios.create()
+  t.context.mock = new MockAdapter(http)
+  t.context.api = new ApiClient({ providers: { http } })
 })
 
 test('Creates a new axios instance if it not passed into params', async t => {
   const api = new ApiClient()
-  t.truthy(api.client)
+  t.truthy(api.providers.http)
 })
 
 test('auth.signIn() retrieves tokens and adds it to header', async t => {
@@ -125,10 +125,10 @@ test('Request fails if got a 404 error', async t => {
 })
 
 test('Request fails if got an error before request interceptor', async t => {
-  const client = axios.create()
-  const mock = new MockAdapter(client)
-  const api = new ApiClient({ client })
-  client.interceptors.request.use(
+  const http = axios.create()
+  const mock = new MockAdapter(http)
+  const api = new ApiClient({ providers: { http } })
+  http.interceptors.request.use(
     () => {
       throw new Error('Test error')
     },
