@@ -58,6 +58,9 @@ test('auth.signOut() removes tokens', async t => {
     .onPost('/auth/login', LOGIN_REQUEST)
     .reply(200, LOGIN_RESPONSE)
   mock
+    .onPost('/auth/logout')
+    .reply(200, true)
+  mock
     .onGet('/test')
     .reply(200, true)
 
@@ -92,7 +95,7 @@ test('Retries request with a new access token if got 401 error before', async t 
     .onPost('/auth/login', LOGIN_REQUEST)
     .reply(200, LOGIN_RESPONSE)
   mock
-    .onPost('/auth/refresh', REFRESH_REQUEST)
+    .onPost('/auth/refresh-token', REFRESH_REQUEST)
     .replyOnce(200, REFRESH_RESPONSE)
   mock
     .onGet('/test')
@@ -177,7 +180,7 @@ test('Requests calling for refresh token just once', async t => {
     .onPost('/auth/login', LOGIN_REQUEST)
     .reply(200, LOGIN_RESPONSE)
   mock
-    .onPost('/auth/refresh', REFRESH_REQUEST)
+    .onPost('/auth/refresh-token', REFRESH_REQUEST)
     .replyOnce(200, REFRESH_RESPONSE)
   mock
     .onGet('/test')
@@ -195,7 +198,7 @@ test('Requests calling for refresh token just once', async t => {
   await api.signIn(LOGIN_REQUEST)
   await Promise.all([api.healthCheck(), api.healthCheck()])
   t.is(
-    mock.history.post.filter(({ url }) => url === '/auth/refresh').length,
+    mock.history.post.filter(({ url }) => url === '/auth/refresh-token').length,
     1
   )
 })

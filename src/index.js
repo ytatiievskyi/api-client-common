@@ -46,13 +46,11 @@ export default class ApiClient {
         }
 
         if (!this.refreshRequest) {
-          this.refreshRequest = this.providers.http.post('/auth/refresh', {
+          this.refreshRequest = this.adapters.auth.refreshToken({
             refreshToken: this.store.refreshToken,
           })
         }
-        const { data } = await this.refreshRequest
-        this.store.accessToken = data.accessToken
-        this.store.refreshToken = data.refreshToken
+        await this.refreshRequest
         const newRequest = {
           ...error.config,
           retry: true,
@@ -64,33 +62,63 @@ export default class ApiClient {
   }
 
   init() {
+    const { adapters, providers } = this
     const { http } = defaultProviders
-    if (this.providers.http == null) {
-      this.providers.http = http
+    if (providers.http == null) {
+      providers.http = http
     }
-    const { auth } = defaultAdapters
-    if (this.adapters.auth == null) {
-      this.adapters.auth = auth
+    const { AuthAdapter } = defaultAdapters
+    if (adapters.auth == null) {
+      adapters.auth = new AuthAdapter({ providers })
     }
+
+    this.bindHooksTo(adapters)
 
     // this.strategies.forEach()
-    // strategy.applyTo(this.providers)
-
-    // TODO: init this.adapters.auth
+    // strategy.bindHooksTo(adapters)
+    // strategy.applyTo(providers)
   }
 
-  async signIn({ login, password }) {
-    const { data } = await this.providers.http.post('/auth/login', { login, password })
-    this.store.accessToken = data.accessToken
-    this.store.refreshToken = data.refreshToken
+  async signIn(params) {
+    return await this.adapters.auth.signIn(params)
   }
 
-  signOut() {
-    this.store.accessToken = null
-    this.store.refreshToken = null
+  async signOut(params) {
+    return await this.adapters.auth.signOut(params)
   }
 
   healthCheck() {
     return this.providers.http('/test').then(({ data }) => data)
+  }
+
+  bindHooksTo({ auth }) {
+    if (auth == null) {
+      throw new Error('Auth adapter is required')
+    }
+    const updateStoreHook = this.updateStore.bind(this)
+    const clearStoreHook = this.clearStore.bind(this)
+
+    auth.afterSignUp = updateStoreHook
+    auth.afterSignIn = updateStoreHook
+    auth.afterRefreshToken = updateStoreHook
+    auth.afterSignOut = clearStoreHook
+  }
+
+  applyTo({ http }) {
+    if (http == null) {
+      throw new Error('HTTP provider is required')
+    }
+  }
+
+  updateStore(data) {
+    this.store.accessToken = data.accessToken
+    this.store.refreshToken = data.refreshToken
+    return data
+  }
+
+  clearStore(data) {
+    this.store.accessToken = null
+    this.store.refreshToken = null
+    return data
   }
 }
