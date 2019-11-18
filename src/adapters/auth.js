@@ -53,11 +53,11 @@ export default class AuthAdapter {
       .then(this.afterRefreshToken)
   }
   
-  async resetPassword() {
-    const { data } = await this.http.post(
-      `${this.path}${this.endpoints.resetPassword}`,
-      {}
-    )
-    return data
-  }
+  // async resetPassword() {
+  //   const { data } = await this.http.post(
+  //     `${this.path}${this.endpoints.resetPassword}`,
+  //     {}
+  //   )
+  //   return data
+  // }
 }

@@ -15,6 +15,34 @@ test('Creates a new axios instance if it not passed into params', async t => {
   t.truthy(api.providers.http)
 })
 
+test('auth.signUp() retrieves tokens and adds it to header', async t => {
+  const { mock, api } = t.context
+  const LOGIN_REQUEST = {
+    login: 'user',
+    password: 'secret',
+  }
+  const LOGIN_RESPONSE = {
+    accessToken: 'ACCESS_TOKEN',
+    refreshToken: 'REFRESH_TOKEN',
+  }
+
+  mock
+    .onPost('/auth/register', LOGIN_REQUEST)
+    .reply(200, LOGIN_RESPONSE)
+  mock
+    .onGet('/test')
+    .reply(200, true)
+
+  await api.adapters.auth.signUp(LOGIN_REQUEST)
+  await api.healthCheck()
+
+  t.is(mock.history.get.length, 1)
+  t.is(
+    mock.history.get[0].headers.Authorization,
+    `Bearer ${LOGIN_RESPONSE.accessToken}`
+  )
+})
+
 test('auth.signIn() retrieves tokens and adds it to header', async t => {
   const { mock, api } = t.context
   const LOGIN_REQUEST = {
@@ -33,7 +61,7 @@ test('auth.signIn() retrieves tokens and adds it to header', async t => {
     .onGet('/test')
     .reply(200, true)
 
-  await api.signIn(LOGIN_REQUEST)
+  await api.adapters.auth.signIn(LOGIN_REQUEST)
   await api.healthCheck()
 
   t.is(mock.history.get.length, 1)
@@ -64,8 +92,8 @@ test('auth.signOut() removes tokens', async t => {
     .onGet('/test')
     .reply(200, true)
 
-  await api.signIn(LOGIN_REQUEST)
-  await api.signOut()
+  await api.adapters.auth.signIn(LOGIN_REQUEST)
+  await api.adapters.auth.signOut()
   await api.healthCheck()
 
   t.is(mock.history.get.length, 1)
@@ -111,7 +139,7 @@ test('Retries request with a new access token if got 401 error before', async t 
       return [404]
     })
 
-  await api.signIn(LOGIN_REQUEST)
+  await api.adapters.auth.signIn(LOGIN_REQUEST)
   await api.healthCheck()
 
   t.is(mock.history.get.length, 2)
@@ -152,7 +180,7 @@ test('Request fails if got an error before request interceptor', async t => {
     .reply(200, LOGIN_RESPONSE)
 
   await t.throwsAsync(
-    api.signIn(LOGIN_REQUEST),
+    api.adapters.auth.signIn(LOGIN_REQUEST),
     {instanceOf: Error, message: 'Test error'}
   )
 })
@@ -195,7 +223,7 @@ test('Requests calling for refresh token just once', async t => {
       return [404]
     })
 
-  await api.signIn(LOGIN_REQUEST)
+  await api.adapters.auth.signIn(LOGIN_REQUEST)
   await Promise.all([api.healthCheck(), api.healthCheck()])
   t.is(
     mock.history.post.filter(({ url }) => url === '/auth/refresh-token').length,
