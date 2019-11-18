@@ -1,15 +1,18 @@
 import defaultProviders from './providers'
+import defaultAdapters from './adapters'
 
 export default class ApiClient {
   constructor(settings = {}) {
     const {
       store = {},
       providers = {},
-      auth = {}
+      adapters = {},
+      strategies = {},
     } = settings
 
     this.store = store
     this.providers = providers
+    this.adapters = adapters
     this.refreshRequest = null
 
     this.init()
@@ -65,8 +68,15 @@ export default class ApiClient {
     if (this.providers.http == null) {
       this.providers.http = http
     }
-    // this.store.accessToken = null
-    // this.store.refreshToken = null
+    const { auth } = defaultAdapters
+    if (this.adapters.auth == null) {
+      this.adapters.auth = auth
+    }
+
+    // this.strategies.forEach()
+    // strategy.applyTo(this.providers)
+
+    // TODO: init this.adapters.auth
   }
 
   async signIn({ login, password }) {
