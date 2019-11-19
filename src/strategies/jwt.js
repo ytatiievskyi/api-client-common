@@ -1,14 +1,9 @@
-export default class JWTAuthStrategy {
-  constructor(settings = {}) {
-    const {
-      store = {},
-      adapters = {},
-    } = settings
+import AbstractStrategy from './abstract'
 
-    this.store = store
-    this.adapters = adapters
-
-    const { auth } = adapters
+export default class JWTAuthStrategy extends AbstractStrategy {
+  constructor(settings) {
+    super(settings)
+    const { auth } = this.adapters
     if (auth == null) {
       throw new Error('Auth adapter is required')
     }
