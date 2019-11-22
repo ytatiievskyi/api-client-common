@@ -5,13 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _providers = _interopRequireDefault(require("./providers"));
+var _providers = require("./providers");
 
-var _adapters = _interopRequireDefault(require("./adapters"));
+var _adapters = require("./adapters");
 
-var _strategies = _interopRequireDefault(require("./strategies"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _strategies = require("./strategies");
 
 class ApiClient {
   constructor(settings = {}) {
@@ -35,34 +33,23 @@ class ApiClient {
       adapters,
       strategies
     } = this;
-    const {
-      http
-    } = _providers.default;
 
     if (providers.http == null) {
-      providers.http = http;
+      providers.http = _providers.http;
     }
 
-    const {
-      AuthAdapter
-    } = _adapters.default;
-
     if (adapters.auth == null) {
-      adapters.auth = new AuthAdapter({
+      adapters.auth = new _adapters.AuthAdapter({
         providers
       });
     }
-
-    const {
-      JWTAuthStrategy
-    } = _strategies.default;
 
     if (strategies.auth == null || !Array.isArray(strategies.auth)) {
       strategies.auth = [];
     }
 
     if (strategies.auth.length < 1) {
-      const jwt = new JWTAuthStrategy({
+      const jwt = new _strategies.JWTAuthStrategy({
         store,
         adapters
       });
