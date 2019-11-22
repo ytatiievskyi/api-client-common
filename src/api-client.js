@@ -1,6 +1,6 @@
-import defaultProviders from './providers'
-import defaultAdapters from './adapters'
-import defaultStrategies from './strategies'
+import { http } from './providers'
+import { AuthAdapter } from './adapters'
+import { JWTAuthStrategy } from './strategies'
 
 export default class ApiClient {
   constructor(settings = {}) {
@@ -22,17 +22,14 @@ export default class ApiClient {
   init() {
     const { store, providers, adapters, strategies } = this
 
-    const { http } = defaultProviders
     if (providers.http == null) {
       providers.http = http
     }
   
-    const { AuthAdapter } = defaultAdapters
     if (adapters.auth == null) {
       adapters.auth = new AuthAdapter({ providers })
     }
 
-    const { JWTAuthStrategy } = defaultStrategies
     if ((strategies.auth == null) || (!Array.isArray(strategies.auth))) {
       strategies.auth = []
     }

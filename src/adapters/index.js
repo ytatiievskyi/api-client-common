@@ -1,3 +1,3 @@
 import AuthAdapter from './auth'
 
-export default { AuthAdapter }
+export { AuthAdapter }

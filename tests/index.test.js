@@ -2,8 +2,7 @@ import test from 'ava'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-import lib from '../src'
-const { ApiClient } = lib
+import { ApiClient } from '../src'
 
 test.beforeEach(t => {
   const http = axios.create()
