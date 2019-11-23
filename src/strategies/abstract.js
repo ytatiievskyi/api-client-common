@@ -3,12 +3,14 @@ export default class AbstractStrategy {
   constructor(settings = {}) {
     const {
       store = {},
-      adapters = {},
     } = settings
 
     this.store = store
-    this.adapters = adapters
+    this.init()
   }
+
+  /* istanbul ignore next */
+  init() {}
 
   /* istanbul ignore next */
   bindHooksTo(adapters = {}) {

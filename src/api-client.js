@@ -17,6 +17,7 @@ export default class ApiClient {
     this.strategies = strategies
 
     this.init()
+    this.applyStrategies()
   }
 
   init() {
@@ -30,18 +31,21 @@ export default class ApiClient {
       adapters.auth = new AuthAdapter({ providers })
     }
 
-    if ((strategies.auth == null) || (!Array.isArray(strategies.auth))) {
-      strategies.auth = []
+    if (strategies.auth == null) {
+      strategies.auth = new JWTAuthStrategy({ store: store.auth })
     }
-    if (strategies.auth.length < 1) {
-      const jwt = new JWTAuthStrategy({ store, adapters })
-      strategies.auth.push(jwt)
-    }
-  
-    strategies.auth.forEach(strategy =>
+  }
+
+  applyStrategies() {
+    const { providers, adapters, strategies } = this
+    
+    const strategyList = Object.keys(strategies)
+      .map(key => strategies[key])
+
+    strategyList.forEach(strategy =>
       strategy.bindHooksTo(adapters)
     )
-    strategies.auth.forEach(strategy =>
+    strategyList.forEach(strategy =>
       strategy.applyTo(providers)
     )
   }
