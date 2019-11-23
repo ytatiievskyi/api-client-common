@@ -5,13 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 Object.defineProperty(exports, "AbstractStrategy", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return _abstract.default;
   }
 });
 Object.defineProperty(exports, "JWTAuthStrategy", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return _jwt.default;
   }
 });

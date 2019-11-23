@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 Object.defineProperty(exports, "AuthAdapter", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return _auth.default;
   }
 });
