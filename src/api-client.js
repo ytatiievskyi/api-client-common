@@ -9,12 +9,16 @@ export default class ApiClient {
       providers = {},
       adapters = {},
       strategies = {},
+      options = {},
+      dependencies = {},
     } = settings
 
     this.store = store
     this.providers = providers
     this.adapters = adapters
     this.strategies = strategies
+    this.options = options
+    this.dependencies = dependencies
 
     this.init()
     this.applyStrategies()
