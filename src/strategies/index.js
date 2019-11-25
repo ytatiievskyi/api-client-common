@@ -1,7 +1,7 @@
 import AbstractStrategy from './abstract'
 import JWTAuthStrategy from './jwt'
 
-export default {
+export {
   AbstractStrategy,
   JWTAuthStrategy,
 }

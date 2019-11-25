@@ -3,19 +3,21 @@ import AbstractStrategy from './abstract'
 export default class JWTAuthStrategy extends AbstractStrategy {
   constructor(settings) {
     super(settings)
-    const { auth } = this.adapters
-    if (auth == null) {
-      throw new Error('Auth adapter is required')
-    }
+  }
+
+  init() {
+    super.init()
   }
 
   bindHooksTo(adapters = {}) {
     const { auth } = adapters
+    const updateStoreHook = this.updateStore.bind(this)
+    const clearStoreHook = this.clearStore.bind(this)
+
     if (auth == null) {
       throw new Error('Auth adapter is required')
     }
-    const updateStoreHook = this.updateStore.bind(this)
-    const clearStoreHook = this.clearStore.bind(this)
+    this.refreshTokenFunc = auth.refreshToken.bind(auth)
 
     auth.afterSignUp = updateStoreHook
     auth.afterSignIn = updateStoreHook
@@ -59,7 +61,7 @@ export default class JWTAuthStrategy extends AbstractStrategy {
         }
 
         if (!this.refreshRequest) {
-          this.refreshRequest = this.adapters.auth.refreshToken({
+          this.refreshRequest = this.refreshTokenFunc({
             refreshToken: this.store.refreshToken,
           })
         }

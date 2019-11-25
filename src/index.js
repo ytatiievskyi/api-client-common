@@ -1,9 +1,14 @@
-import strategies from './strategies'
-import adapters from './adapters'
+import * as adapters from './adapters'
+import * as strategies from './strategies'
 import ApiClient from './api-client'
 
-export default {
-  ApiClient,
-  strategies,
+const createInstance = () =>
+  new ApiClient()
+
+export default createInstance()
+
+export {
   adapters,
+  strategies,
+  ApiClient,
 }

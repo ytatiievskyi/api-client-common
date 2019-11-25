@@ -2,22 +2,24 @@ import test from 'ava'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-import lib from '../src'
-const { ApiClient } = lib
+import { ApiClient } from '../src'
 
 test.beforeEach(t => {
   const http = axios.create()
   t.context.mock = new MockAdapter(http)
-  t.context.api = new ApiClient({ providers: { http } })
+  t.context.client = new ApiClient({ providers: { http } })
+  t.context.api = t.context.client.adapters
 })
 
 test('Creates a new axios instance if it not passed into params', async t => {
-  const api = new ApiClient()
-  t.truthy(api.providers.http)
+  const client = new ApiClient()
+  t.truthy(client.providers.http)
+  t.truthy(client.adapters.auth)
+  t.truthy(client.strategies.auth)
 })
 
 test('auth.signUp() retrieves tokens and adds it to header', async t => {
-  const { mock, api } = t.context
+  const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
     login: 'user',
     password: 'secret',
@@ -34,8 +36,8 @@ test('auth.signUp() retrieves tokens and adds it to header', async t => {
     .onGet('/test')
     .reply(200, true)
 
-  await api.adapters.auth.signUp(LOGIN_REQUEST)
-  await api.healthCheck()
+  await api.auth.signUp(LOGIN_REQUEST)
+  await client.healthCheck()
 
   t.is(mock.history.get.length, 1)
   t.is(
@@ -45,7 +47,7 @@ test('auth.signUp() retrieves tokens and adds it to header', async t => {
 })
 
 test('auth.signIn() retrieves tokens and adds it to header', async t => {
-  const { mock, api } = t.context
+  const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
     login: 'user',
     password: 'secret',
@@ -62,8 +64,8 @@ test('auth.signIn() retrieves tokens and adds it to header', async t => {
     .onGet('/test')
     .reply(200, true)
 
-  await api.adapters.auth.signIn(LOGIN_REQUEST)
-  await api.healthCheck()
+  await api.auth.signIn(LOGIN_REQUEST)
+  await client.healthCheck()
 
   t.is(mock.history.get.length, 1)
   t.is(
@@ -73,7 +75,7 @@ test('auth.signIn() retrieves tokens and adds it to header', async t => {
 })
 
 test('auth.signOut() removes tokens', async t => {
-  const { mock, api } = t.context
+  const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
     login: 'user',
     password: 'secret',
@@ -93,16 +95,16 @@ test('auth.signOut() removes tokens', async t => {
     .onGet('/test')
     .reply(200, true)
 
-  await api.adapters.auth.signIn(LOGIN_REQUEST)
-  await api.adapters.auth.signOut()
-  await api.healthCheck()
+  await api.auth.signIn(LOGIN_REQUEST)
+  await api.auth.signOut()
+  await client.healthCheck()
 
   t.is(mock.history.get.length, 1)
   t.falsy(mock.history.get[0].headers.Authorization)
 })
 
 test('Retries request with a new access token if got 401 error before', async t => {
-  const { mock, api } = t.context
+  const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
     login: 'user',
     password: 'secret',
@@ -140,8 +142,8 @@ test('Retries request with a new access token if got 401 error before', async t 
       return [404]
     })
 
-  await api.adapters.auth.signIn(LOGIN_REQUEST)
-  await api.healthCheck()
+  await api.auth.signIn(LOGIN_REQUEST)
+  await client.healthCheck()
 
   t.is(mock.history.get.length, 2)
   t.is(
@@ -151,15 +153,17 @@ test('Retries request with a new access token if got 401 error before', async t 
 })
 
 test('Request fails if got a 404 error', async t => {
-  const { mock, api } = t.context
+  const { mock, client } = t.context
   mock.onGet('/test').reply(404)
-  await t.throwsAsync(api.healthCheck())
+  await t.throwsAsync(client.healthCheck())
 })
 
 test('Request fails if got an error before request interceptor', async t => {
   const http = axios.create()
   const mock = new MockAdapter(http)
-  const api = new ApiClient({ providers: { http } })
+  const client = new ApiClient({ providers: { http } })
+  const api = client.adapters
+
   http.interceptors.request.use(
     () => {
       throw new Error('Test error')
@@ -181,13 +185,13 @@ test('Request fails if got an error before request interceptor', async t => {
     .reply(200, LOGIN_RESPONSE)
 
   await t.throwsAsync(
-    api.adapters.auth.signIn(LOGIN_REQUEST),
+    api.auth.signIn(LOGIN_REQUEST),
     {instanceOf: Error, message: 'Test error'}
   )
 })
 
 test('Requests calling for refresh token just once', async t => {
-  const { mock, api } = t.context
+  const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
     login: 'user',
     password: 'secret',
@@ -224,8 +228,8 @@ test('Requests calling for refresh token just once', async t => {
       return [404]
     })
 
-  await api.adapters.auth.signIn(LOGIN_REQUEST)
-  await Promise.all([api.healthCheck(), api.healthCheck()])
+  await api.auth.signIn(LOGIN_REQUEST)
+  await Promise.all([client.healthCheck(), client.healthCheck()])
   t.is(
     mock.history.post.filter(({ url }) => url === '/auth/refresh-token').length,
     1

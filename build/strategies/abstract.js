@@ -6,20 +6,31 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 class AbstractStrategy {
-  constructor(settings = {}) {
-    const {
-      store = {},
-      adapters = {}
+  /* istanbul ignore next */
+  constructor() {
+    var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var {
+      store = {}
     } = settings;
     this.store = store;
-    this.adapters = adapters;
+    this.init();
   }
+  /* istanbul ignore next */
 
-  bindHooksTo(adapters = {}) {
+
+  init() {}
+  /* istanbul ignore next */
+
+
+  bindHooksTo() {
+    var adapters = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     throw new Error('Abstract method');
   }
+  /* istanbul ignore next */
 
-  applyTo(providers = {}) {
+
+  applyTo() {
+    var providers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     throw new Error('Abstract method');
   }
 
