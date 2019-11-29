@@ -15,9 +15,17 @@ Object.defineProperty(exports, "JWTAuthStrategy", {
     return _jwt.default;
   }
 });
+Object.defineProperty(exports, "DynamicRoutingStrategy", {
+  enumerable: true,
+  get: function get() {
+    return _dynamicRouting.default;
+  }
+});
 
 var _abstract = _interopRequireDefault(require("./abstract"));
 
 var _jwt = _interopRequireDefault(require("./jwt"));
+
+var _dynamicRouting = _interopRequireDefault(require("./dynamic-routing"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
