@@ -29,10 +29,23 @@ class ApiClient {
     this.options = options;
     this.dependencies = dependencies;
     this.init();
-    this.applyStrategies();
   }
 
   init() {
+    var {
+      options: {
+        isCreateDefaults = true
+      }
+    } = this;
+
+    if (isCreateDefaults) {
+      this.createDefaults();
+    }
+
+    this.applyStrategies();
+  }
+
+  createDefaults() {
     var {
       store,
       providers,

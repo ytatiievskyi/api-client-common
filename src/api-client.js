@@ -21,10 +21,18 @@ export default class ApiClient {
     this.dependencies = dependencies
 
     this.init()
-    this.applyStrategies()
   }
 
   init() {
+    const { options: { isCreateDefaults = true }} = this
+
+    if (isCreateDefaults) {
+      this.createDefaults()
+    }
+    this.applyStrategies()
+  }
+
+  createDefaults() {
     const { store, providers, adapters, strategies } = this
 
     if (providers.http == null) {

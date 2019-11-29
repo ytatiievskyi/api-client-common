@@ -9,6 +9,15 @@ test('ApiClient.init() creates all necessary instances if it not passed into par
   t.truthy(client.strategies.auth)
 })
 
+test('ApiClient.init() does not create new instances if option isCreateDefaults = false', async t => {
+  const client = new ApiClient({
+    options: { isCreateDefaults: false },
+  })
+  t.falsy(client.providers.http)
+  t.falsy(client.adapters.auth)
+  t.falsy(client.strategies.auth)
+})
+
 test('ApiClient.init() does not create new instances if it already passed into params', async t => {
   const http = {}
   const authAdapter = {}
