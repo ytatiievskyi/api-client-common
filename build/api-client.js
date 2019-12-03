@@ -31,18 +31,24 @@ class ApiClient {
     this.init();
   }
 
+  get api() {
+    return this.adapters;
+  }
+
   init() {
     var {
       options: {
         isCreateDefaults = true
-      }
+      },
+      strategies
     } = this;
 
     if (isCreateDefaults) {
       this.createDefaults();
     }
 
-    this.applyStrategies();
+    var strategyList = Object.keys(strategies).map(key => strategies[key]);
+    this.applyStrategies(strategyList);
   }
 
   createDefaults() {
@@ -71,12 +77,11 @@ class ApiClient {
   }
 
   applyStrategies() {
+    var strategyList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var {
       providers,
-      adapters,
-      strategies
+      adapters
     } = this;
-    var strategyList = Object.keys(strategies).map(key => strategies[key]);
     strategyList.forEach(strategy => strategy.bindHooksTo(adapters));
     strategyList.forEach(strategy => strategy.applyTo(providers));
   }
