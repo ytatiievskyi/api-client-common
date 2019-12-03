@@ -11,13 +11,6 @@ test.beforeEach(t => {
   t.context.api = t.context.client.adapters
 })
 
-test('Creates a new axios instance if it not passed into params', async t => {
-  const client = new ApiClient()
-  t.truthy(client.providers.http)
-  t.truthy(client.adapters.auth)
-  t.truthy(client.strategies.auth)
-})
-
 test('auth.signUp() retrieves tokens and adds it to header', async t => {
   const { mock, client, api } = t.context
   const LOGIN_REQUEST = {

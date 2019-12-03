@@ -21,10 +21,27 @@ export default class ApiClient {
     this.dependencies = dependencies
 
     this.init()
-    this.applyStrategies()
+  }
+
+  get api() {
+    return this.adapters
   }
 
   init() {
+    const {
+      options: { isCreateDefaults = true },
+      strategies,
+    } = this
+
+    if (isCreateDefaults) {
+      this.createDefaults()
+    }
+    const strategyList = Object.keys(strategies)
+      .map(key => strategies[key])
+    this.applyStrategies(strategyList)
+  }
+
+  createDefaults() {
     const { store, providers, adapters, strategies } = this
 
     if (providers.http == null) {
@@ -40,12 +57,9 @@ export default class ApiClient {
     }
   }
 
-  applyStrategies() {
-    const { providers, adapters, strategies } = this
+  applyStrategies(strategyList = []) {
+    const { providers, adapters } = this
     
-    const strategyList = Object.keys(strategies)
-      .map(key => strategies[key])
-
     strategyList.forEach(strategy =>
       strategy.bindHooksTo(adapters)
     )
