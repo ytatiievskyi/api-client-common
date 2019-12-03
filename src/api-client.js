@@ -23,6 +23,10 @@ export default class ApiClient {
     this.init()
   }
 
+  get api() {
+    return this.adapters
+  }
+
   init() {
     const { options: { isCreateDefaults = true }} = this
 
