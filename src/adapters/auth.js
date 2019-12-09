@@ -4,13 +4,19 @@ const stub = data => data
 const extractData = ({ data }) => data
 
 export default class AuthAdapter {
-  constructor({ path, endpoints, providers }) {
-    this.path = path || defaultSettings.path
-    this.endpoints = endpoints || defaultSettings.endpoints
+  constructor(settings = {}) {
+    const {
+      path = defaultSettings.path,
+      endpoints = defaultSettings.endpoints,
+      providers = {}
+    } = settings
     const { http } = providers
     if (http == null) {
       throw new Error('HTTP provider is required')
     }
+    
+    this.path = path
+    this.endpoints = endpoints
     this.http = http
 
     this.afterSignUp = stub

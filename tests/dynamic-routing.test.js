@@ -28,7 +28,7 @@ test.beforeEach(t => {
       dynamicRouting,
     },
   })
-  t.context.api = t.context.client.adapters
+  t.context.api = t.context.client.api
 })
 
 test('DynamicRouting strategy adds baseURL to the request', async t => {
