@@ -1,3 +1,7 @@
+import AbstractAdapter from './abstract'
 import AuthAdapter from './auth'
 
-export { AuthAdapter }
+export {
+  AbstractAdapter,
+  AuthAdapter,
+}

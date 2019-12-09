@@ -1,9 +1,9 @@
 import defaultSettings from './auth.data'
+import AbstractAdapter from './abstract'
 
-const stub = data => data
 const extractData = ({ data }) => data
 
-export default class AuthAdapter {
+export default class AuthAdapter extends AbstractAdapter {
   constructor(settings = {}) {
     const {
       path = defaultSettings.path,
@@ -14,15 +14,21 @@ export default class AuthAdapter {
     if (http == null) {
       throw new Error('HTTP provider is required')
     }
-    
+
+    super()
     this.path = path
     this.endpoints = endpoints
     this.http = http
+  }
 
-    this.afterSignUp = stub
-    this.afterSignIn = stub
-    this.afterRefreshToken = stub
-    this.afterSignOut = stub
+  initHooks() {
+    this.hooks.init([
+      'SignUp',
+      'SignIn',
+      'SignOut',
+      'RefreshToken',
+    ])
+    super.initHooks()
   }
 
   async signUp({ login, password }) {
@@ -30,7 +36,7 @@ export default class AuthAdapter {
       `${this.path}${this.endpoints.signUp}`,
       { login, password }
     )
-    return this.afterSignUp(data)
+    return this.hooks.after('SignUp').run(data)
   }
 
   async signIn({ login, password }) {
@@ -38,7 +44,7 @@ export default class AuthAdapter {
       `${this.path}${this.endpoints.signIn}`,
       { login, password }
     )
-    return this.afterSignIn(data)
+    return this.hooks.after('SignIn').run(data)
   }
 
   async signOut() {
@@ -46,7 +52,7 @@ export default class AuthAdapter {
       `${this.path}${this.endpoints.signOut}`,
       {}
     )
-    return this.afterSignOut(data)
+    return this.hooks.after('SignOut').run(data)
   }
 
   refreshToken({ refreshToken }) {
@@ -56,7 +62,7 @@ export default class AuthAdapter {
         { refreshToken }
       )
       .then(extractData)
-      .then(this.afterRefreshToken)
+      .then(this.hooks.after('RefreshToken').run)
   }
   
   // async resetPassword() {
