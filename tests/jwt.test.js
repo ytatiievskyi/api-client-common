@@ -2,13 +2,13 @@ import test from 'ava'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-import { ApiClient } from '../src'
+import { ApiClient, adapters } from '../src'
 
 test.beforeEach(t => {
   const http = axios.create()
   t.context.mock = new MockAdapter(http)
   t.context.client = new ApiClient({ providers: { http } })
-  t.context.api = t.context.client.adapters
+  t.context.api = t.context.client.api
 })
 
 test('auth.signUp() retrieves tokens and adds it to header', async t => {
@@ -155,7 +155,7 @@ test('Request fails if got an error before request interceptor', async t => {
   const http = axios.create()
   const mock = new MockAdapter(http)
   const client = new ApiClient({ providers: { http } })
-  const api = client.adapters
+  const api = client.api
 
   http.interceptors.request.use(
     () => {
@@ -227,4 +227,13 @@ test('Requests calling for refresh token just once', async t => {
     mock.history.post.filter(({ url }) => url === '/auth/refresh-token').length,
     1
   )
+})
+
+test('Http provider should be specified when creating a new AuthAdapter', async t => {
+  const { AuthAdapter } = adapters
+
+  const error = t.throws(() => {
+    new AuthAdapter()
+  }, Error)
+  t.is(error.message, 'HTTP provider is required')
 })

@@ -34,3 +34,13 @@ test('ApiClient.init() does not create new instances if it already passed into p
   t.is(client.adapters.auth, authAdapter)
   t.is(client.strategies.auth, authStrategy)
 })
+
+test('ApiClient.applyStrategies() called without params does not throw any errors', async t => {
+  const client = new ApiClient({
+    options: { isCreateDefaults: false },
+  })
+
+  t.notThrows(() => {
+    client.applyStrategies()
+  })
+})

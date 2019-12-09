@@ -11,18 +11,19 @@ export default class JWTAuthStrategy extends AbstractStrategy {
 
   bindHooksTo(adapters = {}) {
     const { auth } = adapters
-    const updateStoreHook = this.updateStore.bind(this)
-    const clearStoreHook = this.clearStore.bind(this)
-
     if (auth == null) {
       throw new Error('Auth adapter is required')
     }
-    this.refreshTokenFunc = auth.refreshToken.bind(auth)
+    const updateStoreHook = this.updateStore.bind(this)
+    const clearStoreHook = this.clearStore.bind(this)
 
-    auth.afterSignUp = updateStoreHook
-    auth.afterSignIn = updateStoreHook
-    auth.afterRefreshToken = updateStoreHook
-    auth.afterSignOut = clearStoreHook
+    auth.hooks
+      .after('SignUp', updateStoreHook)
+      .after('SignIn', updateStoreHook)
+      .after('RefreshToken', updateStoreHook)
+      .after('SignOut', clearStoreHook)
+
+    this.refreshTokenFunc = auth.refreshToken.bind(auth)
   }
 
   applyTo(providers = {}) {
