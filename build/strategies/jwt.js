@@ -33,18 +33,15 @@ class JWTAuthStrategy extends _abstract.default {
     var {
       auth
     } = adapters;
-    var updateStoreHook = this.updateStore.bind(this);
-    var clearStoreHook = this.clearStore.bind(this);
 
     if (auth == null) {
       throw new Error('Auth adapter is required');
     }
 
+    var updateStoreHook = this.updateStore.bind(this);
+    var clearStoreHook = this.clearStore.bind(this);
+    auth.hooks.after('SignUp', updateStoreHook).after('SignIn', updateStoreHook).after('RefreshToken', updateStoreHook).after('SignOut', clearStoreHook);
     this.refreshTokenFunc = auth.refreshToken.bind(auth);
-    auth.afterSignUp = updateStoreHook;
-    auth.afterSignIn = updateStoreHook;
-    auth.afterRefreshToken = updateStoreHook;
-    auth.afterSignOut = clearStoreHook;
   }
 
   applyTo() {
