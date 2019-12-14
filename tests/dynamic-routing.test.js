@@ -12,7 +12,15 @@ test.beforeEach(t => {
   const http = axios.create()
   t.context.mock = new MockAdapter(http)
 
-  const balancer = {
+  const coordinator = {
+    hooks: {
+      after(method, handler) {
+        if (method === 'getServers') {
+          coordinator.afterGetServers = handler
+        }
+        return coordinator
+      }
+    },
     afterGetServers: ({ data }) => data,
     getServers() {
       return this.afterGetServers(getServersData)
@@ -23,7 +31,7 @@ test.beforeEach(t => {
   
   t.context.client = new ApiClient({
     providers: { http },
-    adapters: { balancer },
+    adapters: { coordinator },
     strategies: {
       dynamicRouting,
     },
@@ -47,7 +55,7 @@ test('DynamicRouting strategy adds baseURL to the request', async t => {
   t.is(baseURL, host)
 })
 
-test('DynamicRouting strategy adds new baseURL to the request after balancer updates server list', async t => {
+test('DynamicRouting strategy adds new baseURL to the request after coordinator updates server list', async t => {
   const { mock, client, api } = t.context
   const { host } = store.servers[0]
   const { host: newHost } = getServersData.servers[0]
@@ -60,9 +68,10 @@ test('DynamicRouting strategy adds new baseURL to the request after balancer upd
     .reply(200, true)
 
   const result = await client.healthCheck()
-  await api.balancer.getServers()
+  await api.coordinator.getServers()
   const newResult = await client.healthCheck()
 
+  t.is(store.servers.length, 3)
   t.is(result, true)
   t.is(newResult, true)
   t.is(mock.history.get.length, 2)
