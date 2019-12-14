@@ -3,13 +3,14 @@ import AbstractStrategy from './abstract'
 export default class DynamicRoutingStrategy extends AbstractStrategy {
 
   bindHooksTo(adapters = {}) {
-    const { balancer } = adapters
+    const { coordinator } = adapters
     const updateStoreHook = this.updateStore.bind(this)
 
-    if (balancer == null) {
-      throw new Error('Balancer adapter is required')
+    if (coordinator == null) {
+      throw new Error('Coordinator adapter is required')
     }
-    balancer.afterGetServers = updateStoreHook
+    coordinator.hooks
+      .after('getServers', updateStoreHook)
   }
 
   applyTo(providers = {}) {
@@ -28,12 +29,10 @@ export default class DynamicRoutingStrategy extends AbstractStrategy {
   }
   
   updateStore(data) {
-    const { servers = {} } = data
-    const { servers: previous } = this.store
-    this.store.servers = {
-      ...previous,
+    const { servers = [] } = data
+    this.store.servers = [
       ...servers,
-    }
+    ]
     return data
   }
 }
