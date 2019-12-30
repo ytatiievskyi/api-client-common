@@ -2,12 +2,17 @@ import test from 'ava'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-import { ApiClient, adapters } from '../src'
+import { ApiClient, adapters, modules } from '../src'
+
+const { JWTAuthModule } = modules
 
 test.beforeEach(t => {
   const http = axios.create()
+  const auth = new JWTAuthModule({ providers: { http } })
+
+  t.context.http = http
   t.context.mock = new MockAdapter(http)
-  t.context.client = new ApiClient({ providers: { http } })
+  t.context.client = new ApiClient({ modules: { auth } })
   t.context.api = t.context.client.api
 })
 
@@ -152,9 +157,7 @@ test('Request fails if got a 404 error', async t => {
 })
 
 test('Request fails if got an error before request interceptor', async t => {
-  const http = axios.create()
-  const mock = new MockAdapter(http)
-  const client = new ApiClient({ providers: { http } })
+  const { http, mock, client } = t.context
   const api = client.api
 
   http.interceptors.request.use(
