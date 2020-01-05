@@ -9,7 +9,7 @@ Object.defineProperty(exports, "ApiClient", {
     return _apiClient.default;
   }
 });
-exports.strategies = exports.adapters = exports.default = void 0;
+exports.modules = exports.strategies = exports.adapters = exports.default = void 0;
 
 var adapters = _interopRequireWildcard(require("./adapters"));
 
@@ -18,6 +18,10 @@ exports.adapters = adapters;
 var strategies = _interopRequireWildcard(require("./strategies"));
 
 exports.strategies = strategies;
+
+var modules = _interopRequireWildcard(require("./modules"));
+
+exports.modules = modules;
 
 var _apiClient = _interopRequireDefault(require("./api-client"));
 
