@@ -23,28 +23,28 @@ export default class AuthAdapter extends AbstractAdapter {
 
   initHooks() {
     this.hooks.init([
-      'SignUp',
-      'SignIn',
-      'SignOut',
-      'RefreshToken',
+      'signUp',
+      'signIn',
+      'signOut',
+      'refreshToken',
     ])
     super.initHooks()
   }
 
-  async signUp({ login, password }) {
+  async signUp({ username, password }) {
     const { data } = await this.http.post(
       `${this.path}${this.endpoints.signUp}`,
-      { login, password }
+      { username, password }
     )
-    return this.hooks.after('SignUp').run(data)
+    return this.hooks.after('signUp').run(data)
   }
 
-  async signIn({ login, password }) {
+  async signIn({ username, password }) {
     const { data } = await this.http.post(
       `${this.path}${this.endpoints.signIn}`,
-      { login, password }
+      { username, password }
     )
-    return this.hooks.after('SignIn').run(data)
+    return this.hooks.after('signIn').run(data)
   }
 
   async signOut() {
@@ -52,7 +52,7 @@ export default class AuthAdapter extends AbstractAdapter {
       `${this.path}${this.endpoints.signOut}`,
       {}
     )
-    return this.hooks.after('SignOut').run(data)
+    return this.hooks.after('signOut').run(data)
   }
 
   refreshToken({ refreshToken }) {
@@ -62,7 +62,7 @@ export default class AuthAdapter extends AbstractAdapter {
         { refreshToken }
       )
       .then(extractData)
-      .then(this.hooks.after('RefreshToken').run)
+      .then(this.hooks.after('refreshToken').run)
   }
   
   // async resetPassword() {

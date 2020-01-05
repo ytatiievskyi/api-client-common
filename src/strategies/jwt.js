@@ -18,10 +18,10 @@ export default class JWTAuthStrategy extends AbstractStrategy {
     const clearStoreHook = this.clearStore.bind(this)
 
     auth.hooks
-      .after('SignUp', updateStoreHook)
-      .after('SignIn', updateStoreHook)
-      .after('RefreshToken', updateStoreHook)
-      .after('SignOut', clearStoreHook)
+      .after('signUp', updateStoreHook)
+      .after('signIn', updateStoreHook)
+      .after('refreshToken', updateStoreHook)
+      .after('signOut', clearStoreHook)
 
     this.refreshTokenFunc = auth.refreshToken.bind(auth)
   }
