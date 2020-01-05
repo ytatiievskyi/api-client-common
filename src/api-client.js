@@ -1,74 +1,48 @@
-import { http } from './providers'
-import { AuthAdapter } from './adapters'
-import { JWTAuthStrategy } from './strategies'
+import { JWTAuthModule } from './modules'
 
 export default class ApiClient {
   constructor(settings = {}) {
     const {
-      store = {},
-      providers = {},
-      adapters = {},
-      strategies = {},
+      modules = {},
       options = {},
-      dependencies = {},
     } = settings
 
-    this.store = store
-    this.providers = providers
-    this.adapters = adapters
-    this.strategies = strategies
+    this.modules = modules
     this.options = options
-    this.dependencies = dependencies
-
+    this.api = {}
+    
     this.init()
-  }
-
-  get api() {
-    return this.adapters
   }
 
   init() {
     const {
       options: { isCreateDefaults = true },
-      strategies,
+      modules,
     } = this
 
     if (isCreateDefaults) {
       this.createDefaults()
     }
-    const strategyList = Object.keys(strategies)
-      .map(key => strategies[key])
-    this.applyStrategies(strategyList)
+
+    this.api = Object.keys(modules)
+      .reduce((obj, key) => {
+        obj[key] = modules[key].api
+        return obj
+      }, {})
   }
 
   createDefaults() {
-    const { store, providers, adapters, strategies } = this
-
-    if (providers.http == null) {
-      providers.http = http
+    const { modules } = this
+    if (modules.auth == null) {
+      modules.auth = new JWTAuthModule()
     }
-  
-    if (adapters.auth == null) {
-      adapters.auth = new AuthAdapter({ providers })
-    }
-
-    if (strategies.auth == null) {
-      strategies.auth = new JWTAuthStrategy({ store: store.auth })
-    }
-  }
-
-  applyStrategies(strategyList = []) {
-    const { providers, adapters } = this
-    
-    strategyList.forEach(strategy =>
-      strategy.bindHooksTo(adapters)
-    )
-    strategyList.forEach(strategy =>
-      strategy.applyTo(providers)
-    )
   }
 
   healthCheck() {
-    return this.providers.http('/test').then(({ data }) => data)
+    const { modules } = this
+    const results = Object.keys(modules)
+      .map(key => modules[key])
+      .map(m => m.healthCheck())
+    return Promise.all(results)
   }
 }

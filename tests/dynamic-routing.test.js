@@ -5,7 +5,8 @@ import MockAdapter from 'axios-mock-adapter'
 import store from './dynamic-routing/store.data'
 import getServersData from './dynamic-routing/get-servers'
 
-import { ApiClient, strategies } from '../src'
+import { modules, strategies } from '../src'
+const { ApiModule } = modules
 const { DynamicRoutingStrategy } = strategies
 
 test.beforeEach(t => {
@@ -29,7 +30,7 @@ test.beforeEach(t => {
   
   const dynamicRouting = new DynamicRoutingStrategy({ store })
   
-  t.context.client = new ApiClient({
+  t.context.client = new ApiModule({
     providers: { http },
     adapters: { coordinator },
     strategies: {
