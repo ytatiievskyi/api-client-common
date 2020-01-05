@@ -34,12 +34,12 @@ export default class ApiModule {
     }
     const strategyList = Object.keys(strategies)
       .map(key => strategies[key])
-    this.applyStrategies(strategyList)
+    this.initStrategies(strategyList)
   }
 
   createDefaults() {}
 
-  applyStrategies(strategyList = []) {
+  initStrategies(strategyList = []) {
     const { providers, adapters } = this
     
     strategyList.forEach(strategy =>

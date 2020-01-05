@@ -19,7 +19,7 @@ test.beforeEach(t => {
 test('auth.signUp() retrieves tokens and adds it to header', async t => {
   const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
-    login: 'user',
+    username: 'user',
     password: 'secret',
   }
   const LOGIN_RESPONSE = {
@@ -47,7 +47,7 @@ test('auth.signUp() retrieves tokens and adds it to header', async t => {
 test('auth.signIn() retrieves tokens and adds it to header', async t => {
   const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
-    login: 'user',
+    username: 'user',
     password: 'secret',
   }
   const LOGIN_RESPONSE = {
@@ -75,7 +75,7 @@ test('auth.signIn() retrieves tokens and adds it to header', async t => {
 test('auth.signOut() removes tokens', async t => {
   const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
-    login: 'user',
+    username: 'user',
     password: 'secret',
   }
   const LOGIN_RESPONSE = {
@@ -104,7 +104,7 @@ test('auth.signOut() removes tokens', async t => {
 test('Retries request with a new access token if got 401 error before', async t => {
   const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
-    login: 'user',
+    username: 'user',
     password: 'secret',
   }
   const LOGIN_RESPONSE = {
@@ -168,7 +168,7 @@ test('Request fails if got an error before request interceptor', async t => {
   )
 
   const LOGIN_REQUEST = {
-    login: 'user',
+    username: 'user',
     password: 'secret',
   }
   const LOGIN_RESPONSE = {
@@ -189,7 +189,7 @@ test('Request fails if got an error before request interceptor', async t => {
 test('Requests calling for refresh token just once', async t => {
   const { mock, client, api } = t.context
   const LOGIN_REQUEST = {
-    login: 'user',
+    username: 'user',
     password: 'secret',
   }
   const LOGIN_RESPONSE = {

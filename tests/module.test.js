@@ -36,12 +36,12 @@ test('JWTAuthModule.init() does not create new instances if it already passed in
   t.is(client.strategies.auth, authStrategy)
 })
 
-test('JWTAuthModule.applyStrategies() called without params does not throw any errors', async t => {
+test('JWTAuthModule.initStrategies() called without params does not throw any errors', async t => {
   const client = new JWTAuthModule({
     options: { isCreateDefaults: false },
   })
 
   t.notThrows(() => {
-    client.applyStrategies()
+    client.initStrategies()
   })
 })
