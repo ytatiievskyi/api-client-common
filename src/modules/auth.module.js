@@ -21,7 +21,7 @@ export default class JWTAuthModule extends ApiModule {
     }
 
     if (strategies.auth == null) {
-      strategies.auth = new JWTAuthStrategy({ store: store.auth })
+      strategies.auth = new JWTAuthStrategy({ store })
     }
   }
 }
