@@ -26,10 +26,10 @@ export default class JWTAuthStrategy extends AbstractStrategy {
     this.refreshTokenFunc = auth.refreshToken.bind(auth)
   }
 
-  applyTo(providers = {}) {
-    const { http } = providers
+  applyTo(channels = {}) {
+    const { http } = channels
     if (http == null) {
-      throw new Error('HTTP provider is required')
+      throw new Error('HTTP channel is required')
     }
     this.refreshRequest = null
 

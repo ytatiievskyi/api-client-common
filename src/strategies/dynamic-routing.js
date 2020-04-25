@@ -13,10 +13,10 @@ export default class DynamicRoutingStrategy extends AbstractStrategy {
       .after('getServers', updateStoreHook)
   }
 
-  applyTo(providers = {}) {
-    const { http } = providers
+  applyTo(channels = {}) {
+    const { http } = channels
     if (http == null) {
-      throw new Error('HTTP provider is required')
+      throw new Error('HTTP channel is required')
     }
     http.interceptors.request.use(
       config => {

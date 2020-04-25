@@ -8,11 +8,11 @@ export default class AuthAdapter extends AbstractAdapter {
     const {
       path = defaultSettings.path,
       endpoints = defaultSettings.endpoints,
-      providers = {}
+      channels = {}
     } = settings
-    const { http } = providers
+    const { http } = channels
     if (http == null) {
-      throw new Error('HTTP provider is required')
+      throw new Error('HTTP channel is required')
     }
 
     super()

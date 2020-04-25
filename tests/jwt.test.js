@@ -8,7 +8,7 @@ const { JWTAuthModule } = modules
 
 test.beforeEach(t => {
   const http = axios.create()
-  const auth = new JWTAuthModule({ providers: { http } })
+  const auth = new JWTAuthModule({ channels: { http } })
 
   t.context.http = http
   t.context.mock = new MockAdapter(http)
@@ -232,11 +232,11 @@ test('Requests calling for refresh token just once', async t => {
   )
 })
 
-test('Http provider should be specified when creating a new AuthAdapter', async t => {
+test('Http channel should be specified when creating a new AuthAdapter', async t => {
   const { AuthAdapter } = adapters
 
   const error = t.throws(() => {
     new AuthAdapter()
   }, Error)
-  t.is(error.message, 'HTTP provider is required')
+  t.is(error.message, 'HTTP channel is required')
 })

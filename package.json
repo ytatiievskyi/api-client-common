@@ -19,7 +19,7 @@
     "api",
     "client",
     "module",
-    "provider",
+    "channel",
     "adapter",
     "strategy"
   ],

@@ -7,9 +7,9 @@ ApiClient consists of ApiModules which collects all API calls and other logic of
 
 Each ApiModule consist of four basic components:
 - `store` - an object to store module state or data such as tokens, account data, etc.
-- `providers` - represents communication channels using protocols: http, ws, rpc, graphql, etc.
-- `strategies` - defines how to apply specific logic to providers (setup auth headers, add request params etc.). Uses hooks to bind to adapters in order to extract necessary data.
-- `adapters` - represents API of particular external service. Uses providers to communicate with them.
+- `channels` - represents communication channels using protocols: http, ws, rpc, graphql, etc.
+- `strategies` - defines how to apply specific logic to channels (setup auth headers, add request params etc.). Uses hooks to bind to adapters in order to extract necessary data.
+- `adapters` - represents API of particular external service. Uses channels to communicate with them.
 
 Also you can pass `options` and `dependencies` into ApiModules constructor `settings`.
 
@@ -61,19 +61,19 @@ const http = axios.create()
 const rpc = new Client('ws://localhost:8080')
 
 const auth = new JWTAuthModule({
-  providers: { http },
+  channels: { http },
   adapters: {
-    auth: new MyAuthAdapter({ providers: { http } }),
+    auth: new MyAuthAdapter({ channels: { http } }),
   },
   strategies: {
     auth: new MyAuthStrategy({ store }),
   }
 })
 const account = new MyAccountModule({
-  providers: { http, rpc },
+  channels: { http, rpc },
 })
 const messages = new MyMessagesModule({
-  providers: { rpc },
+  channels: { rpc },
 })
 
 const client = new ApiClient({

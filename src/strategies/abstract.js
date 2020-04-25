@@ -18,7 +18,7 @@ export default class AbstractStrategy {
   }
 
   /* istanbul ignore next */
-  applyTo(providers = {}) {
+  applyTo(channels = {}) {
     throw new Error('Abstract method')
   }
 }

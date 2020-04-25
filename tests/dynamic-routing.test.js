@@ -31,7 +31,7 @@ test.beforeEach(t => {
   const dynamicRouting = new DynamicRoutingStrategy({ store })
   
   t.context.client = new ApiModule({
-    providers: { http },
+    channels: { http },
     adapters: { coordinator },
     strategies: {
       dynamicRouting,
