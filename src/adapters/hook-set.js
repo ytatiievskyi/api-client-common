@@ -1,5 +1,9 @@
+// TODO: rewrite to classes
+// TODO: separate into a standalone library
+
 function createHandlerSet(hookSet) {
   const handlers = []
+  // const loggers = []
   return {
     add(handler) {
       if (typeof handler === 'function')
@@ -9,10 +13,22 @@ function createHandlerSet(hookSet) {
       return hookSet
     },
     run(data) {
+      // TODO: call logger
+      // loggers.forEach(logger => {
+      //   logger(instance, hookname, method, data)
+      // })
       return handlers.reduce((params, handler) => {
         return handler(params)
       }, data)
-    }
+    },
+    // TODO: assign handler for logging calls and values
+    // log(logger) { 
+    //   if (typeof logger === 'function')
+    //     loggers.push(logger)
+    //   else
+    //     throw new TypeError('function is required')
+    //   return hookSet
+    // }
   }
 }
 
@@ -21,6 +37,32 @@ function initStock(hookSet, stock) {
     methods.forEach(method =>
       stock[method] = createHandlerSet(hookSet)
     )
+}
+
+function wrapMethod(instance, method, hookSet, names) {
+  const prop = instance[method]
+  if (prop == null)
+    throw new TypeError(`object ${instance} should has a property ${method}`)
+  if (typeof prop !== 'function')
+    throw new TypeError(`property ${method} should be a function`)
+  
+  // TODO: need to consider several args not just the first
+  function wrapped(param) {
+    const input = hookSet.input(method).run(param)
+    hookSet.before(method).run(input)
+    return prop.call(instance, param)
+      .then(result => {
+        hookSet.after(method).run(result)
+        return result
+      })
+      .then(hookSet.output(method).run)
+      .catch(err => {
+        hookSet.error(method).run(err)
+        return Promise.reject(err)
+      })
+  }
+  
+  instance[method] = wrapped.bind(instance)
 }
 
 function hooksByStock(stock) {
@@ -43,7 +85,7 @@ function hooksByStock(stock) {
   }
 }
 
-function createHookSet(names = ['before', 'after', 'error']) {
+function createHookSet(names = ['input', 'before', 'after', 'output',  'error']) {
 
   const stock = {}
   names.forEach(name =>
@@ -55,6 +97,19 @@ function createHookSet(names = ['before', 'after', 'error']) {
   hookSet.init = (methods) => {
     names.forEach(name =>
       initStock(hookSet, stock[name])(methods)
+    )
+    return hookSet
+  }
+
+  hookSet.wrap = (instance, methods) => {
+    if (!(instance instanceof Object)) {
+      throw new TypeError(`instance ${instance} should be an Object`)
+    }
+    names.forEach(name =>
+      initStock(hookSet, stock[name])(methods)
+    )
+    methods.forEach(method =>
+      wrapMethod(instance, method, hookSet, names)
     )
     return hookSet
   }

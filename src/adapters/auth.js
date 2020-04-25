@@ -22,7 +22,7 @@ export default class AuthAdapter extends AbstractAdapter {
   }
 
   initHooks() {
-    this.hooks.init([
+    this.hooks.wrap(this, [
       'signUp',
       'signIn',
       'signOut',
@@ -36,7 +36,7 @@ export default class AuthAdapter extends AbstractAdapter {
       `${this.path}${this.endpoints.signUp}`,
       { username, password }
     )
-    return this.hooks.after('signUp').run(data)
+    return data
   }
 
   async signIn({ username, password }) {
@@ -44,7 +44,7 @@ export default class AuthAdapter extends AbstractAdapter {
       `${this.path}${this.endpoints.signIn}`,
       { username, password }
     )
-    return this.hooks.after('signIn').run(data)
+    return data
   }
 
   async signOut() {
@@ -52,7 +52,7 @@ export default class AuthAdapter extends AbstractAdapter {
       `${this.path}${this.endpoints.signOut}`,
       {}
     )
-    return this.hooks.after('signOut').run(data)
+    return data
   }
 
   refreshToken({ refreshToken }) {
@@ -62,7 +62,6 @@ export default class AuthAdapter extends AbstractAdapter {
         { refreshToken }
       )
       .then(extractData)
-      .then(this.hooks.after('refreshToken').run)
   }
   
   // async resetPassword() {
