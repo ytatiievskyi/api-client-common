@@ -1,6 +1,6 @@
 import ApiModule from './api.module'
 
-import { http } from '../providers'
+import { http } from '../channels'
 import { AuthAdapter } from '../adapters'
 import { JWTAuthStrategy } from '../strategies'
 
@@ -10,14 +10,14 @@ export default class JWTAuthModule extends ApiModule {
   }
 
   createDefaults() {
-    const { store, providers, adapters, strategies } = this
+    const { store, channels, adapters, strategies } = this
 
-    if (providers.http == null) {
-      providers.http = http
+    if (channels.http == null) {
+      channels.http = http
     }
   
     if (adapters.auth == null) {
-      adapters.auth = new AuthAdapter({ providers })
+      adapters.auth = new AuthAdapter({ channels })
     }
 
     if (strategies.auth == null) {

@@ -15,7 +15,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -47,13 +47,13 @@ class JWTAuthStrategy extends _abstract.default {
   applyTo() {
     var _this = this;
 
-    var providers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var channels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var {
       http
-    } = providers;
+    } = channels;
 
     if (http == null) {
-      throw new Error('HTTP provider is required');
+      throw new Error('HTTP channel is required');
     }
 
     this.refreshRequest = null;
@@ -69,9 +69,7 @@ class JWTAuthStrategy extends _abstract.default {
       newConfig.headers.Authorization = "Bearer ".concat(this.store.accessToken);
       return newConfig;
     }, e => Promise.reject(e));
-    http.interceptors.response.use(r => r,
-    /*#__PURE__*/
-    function () {
+    http.interceptors.response.use(r => r, /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(function* (error) {
         if (!_this.store.refreshToken || error.response.status !== 401 || error.config.retry) {
           throw error;
@@ -101,13 +99,11 @@ class JWTAuthStrategy extends _abstract.default {
   updateStore(data) {
     this.store.accessToken = data.accessToken;
     this.store.refreshToken = data.refreshToken;
-    return data;
   }
 
   clearStore(data) {
     this.store.accessToken = null;
     this.store.refreshToken = null;
-    return data;
   }
 
 }

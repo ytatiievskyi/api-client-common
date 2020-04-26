@@ -2,7 +2,7 @@ export default class ApiModule {
   constructor(settings = {}) {
     const {
       store = {},
-      providers = {},
+      channels = {},
       adapters = {},
       strategies = {},
       options = {},
@@ -10,7 +10,7 @@ export default class ApiModule {
     } = settings
 
     this.store = store
-    this.providers = providers
+    this.channels = channels
     this.adapters = adapters
     this.strategies = strategies
     this.options = options
@@ -40,17 +40,17 @@ export default class ApiModule {
   createDefaults() {}
 
   initStrategies(strategyList = []) {
-    const { providers, adapters } = this
+    const { channels, adapters } = this
     
     strategyList.forEach(strategy =>
       strategy.bindHooksTo(adapters)
     )
     strategyList.forEach(strategy =>
-      strategy.applyTo(providers)
+      strategy.applyTo(channels)
     )
   }
 
   healthCheck() {
-    return this.providers.http('/test').then(({ data }) => data)
+    return this.channels.http('/test').then(({ data }) => data)
   }
 }

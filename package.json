@@ -1,6 +1,6 @@
 {
   "name": "common-api-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "common structure to build api client",
   "main": "./build/index.js",
   "scripts": {
@@ -19,23 +19,26 @@
     "api",
     "client",
     "module",
-    "provider",
+    "channel",
     "adapter",
     "strategy"
   ],
-  "author": "Taras Panasiuk",
+  "author": {
+    "name": "Taras Panasiuk",
+    "email": "webdev.taras@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.0"
+    "axios": "^0.19.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.0",
-    "@babel/core": "^7.7.2",
-    "@babel/preset-env": "^7.7.1",
-    "@babel/register": "^7.7.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/register": "^7.9.0",
     "ava": "^2.4.0",
-    "axios-mock-adapter": "^1.17.0",
-    "nyc": "^14.1.1"
+    "axios-mock-adapter": "^1.18.1",
+    "nyc": "^15.0.1"
   },
   "babel": {
     "presets": [

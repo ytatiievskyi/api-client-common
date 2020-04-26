@@ -3,7 +3,7 @@ import createHookSet from './hook-set'
 export default class AbstractAdapter {
   /* istanbul ignore next */
   constructor() {
-    this.hooks = createHookSet(['before', 'after'])
+    this.hooks = createHookSet()
     this.initHooks()
   }
 
