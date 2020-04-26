@@ -46,23 +46,34 @@ function wrapMethod(instance, method, hookSet, names) {
   if (typeof prop !== 'function')
     throw new TypeError(`property ${method} should be a function`)
   
+  instance[method] = wrapped.bind(instance)
+
   // TODO: need to consider several args not just the first
   function wrapped(param) {
-    const input = hookSet.input(method).run(param)
-    hookSet.before(method).run(input)
-    return prop.call(instance, param)
-      .then(result => {
-        hookSet.after(method).run(result)
-        return result
-      })
-      .then(hookSet.output(method).run)
-      .catch(err => {
-        hookSet.error(method).run(err)
-        return Promise.reject(err)
-      })
+    const onBefore = data => {
+      hookSet.before(method).run(data)
+      return hookSet.input(method).run(data)
+    }
+    const onAfter = data => {
+      const output = hookSet.output(method).run(data)
+      hookSet.after(method).run(output)
+      return output
+    }
+    const onError = err => {
+      hookSet.error(method).run(err)
+      throw err
+    }
+
+    try {
+      const input = onBefore(param)
+      const result = prop.call(instance, input)
+      return (result instanceof Promise)
+        ? result.then(onAfter).catch(onError)
+        : onAfter(result)
+    } catch (error) {
+      onError(error)
+    }
   }
-  
-  instance[method] = wrapped.bind(instance)
 }
 
 function hooksByStock(stock) {

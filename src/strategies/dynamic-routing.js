@@ -33,6 +33,5 @@ export default class DynamicRoutingStrategy extends AbstractStrategy {
     this.store.servers = [
       ...servers,
     ]
-    return data
   }
 }

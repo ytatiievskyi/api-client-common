@@ -80,12 +80,10 @@ export default class JWTAuthStrategy extends AbstractStrategy {
   updateStore(data) {
     this.store.accessToken = data.accessToken
     this.store.refreshToken = data.refreshToken
-    return data
   }
 
   clearStore(data) {
     this.store.accessToken = null
     this.store.refreshToken = null
-    return data
   }
 }
