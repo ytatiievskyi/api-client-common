@@ -12,7 +12,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 class AbstractAdapter {
   /* istanbul ignore next */
   constructor() {
-    this.hooks = (0, _hookSet.default)(['before', 'after']);
+    this.hooks = (0, _hookSet.default)();
     this.initHooks();
   }
   /* istanbul ignore next */

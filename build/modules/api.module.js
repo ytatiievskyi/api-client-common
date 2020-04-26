@@ -10,14 +10,14 @@ class ApiModule {
     var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var {
       store = {},
-      providers = {},
+      channels = {},
       adapters = {},
       strategies = {},
       options = {},
       dependencies = {}
     } = settings;
     this.store = store;
-    this.providers = providers;
+    this.channels = channels;
     this.adapters = adapters;
     this.strategies = strategies;
     this.options = options;
@@ -50,15 +50,15 @@ class ApiModule {
   initStrategies() {
     var strategyList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var {
-      providers,
+      channels,
       adapters
     } = this;
     strategyList.forEach(strategy => strategy.bindHooksTo(adapters));
-    strategyList.forEach(strategy => strategy.applyTo(providers));
+    strategyList.forEach(strategy => strategy.applyTo(channels));
   }
 
   healthCheck() {
-    return this.providers.http('/test').then((_ref) => {
+    return this.channels.http('/test').then((_ref) => {
       var {
         data
       } = _ref;

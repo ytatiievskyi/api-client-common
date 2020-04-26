@@ -28,14 +28,14 @@ class AuthAdapter extends _abstract.default {
     var {
       path = _auth.default.path,
       endpoints = _auth.default.endpoints,
-      providers = {}
+      channels = {}
     } = settings;
     var {
       http
-    } = providers;
+    } = channels;
 
     if (http == null) {
-      throw new Error('HTTP provider is required');
+      throw new Error('HTTP channel is required');
     }
 
     super();
@@ -45,7 +45,7 @@ class AuthAdapter extends _abstract.default {
   }
 
   initHooks() {
-    this.hooks.init(['signUp', 'signIn', 'signOut', 'refreshToken']);
+    this.hooks.wrap(this, ['signUp', 'signIn', 'signOut', 'refreshToken']);
     super.initHooks();
   }
 
@@ -63,7 +63,7 @@ class AuthAdapter extends _abstract.default {
         username,
         password
       });
-      return _this.hooks.after('signUp').run(data);
+      return data;
     })();
   }
 
@@ -81,7 +81,7 @@ class AuthAdapter extends _abstract.default {
         username,
         password
       });
-      return _this2.hooks.after('signIn').run(data);
+      return data;
     })();
   }
 
@@ -92,7 +92,7 @@ class AuthAdapter extends _abstract.default {
       var {
         data
       } = yield _this3.http.post("".concat(_this3.path).concat(_this3.endpoints.signOut), {});
-      return _this3.hooks.after('signOut').run(data);
+      return data;
     })();
   }
 
@@ -102,7 +102,7 @@ class AuthAdapter extends _abstract.default {
     } = _ref4;
     return this.http.post("".concat(this.path).concat(this.endpoints.refreshToken), {
       refreshToken
-    }).then(extractData).then(this.hooks.after('refreshToken').run);
+    }).then(extractData);
   } // async resetPassword() {
   //   const { data } = await this.http.post(
   //     `${this.path}${this.endpoints.resetPassword}`,

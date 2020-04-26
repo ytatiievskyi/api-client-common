@@ -30,7 +30,7 @@ class AbstractStrategy {
 
 
   applyTo() {
-    var providers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var channels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     throw new Error('Abstract method');
   }
 

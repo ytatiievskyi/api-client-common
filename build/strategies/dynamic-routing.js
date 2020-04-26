@@ -25,13 +25,13 @@ class DynamicRoutingStrategy extends _abstract.default {
   }
 
   applyTo() {
-    var providers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var channels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var {
       http
-    } = providers;
+    } = channels;
 
     if (http == null) {
-      throw new Error('HTTP provider is required');
+      throw new Error('HTTP channel is required');
     }
 
     http.interceptors.request.use(config => {
@@ -48,7 +48,6 @@ class DynamicRoutingStrategy extends _abstract.default {
       servers = []
     } = data;
     this.store.servers = [...servers];
-    return data;
   }
 
 }

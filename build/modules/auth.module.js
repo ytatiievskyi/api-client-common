@@ -7,7 +7,7 @@ exports.default = void 0;
 
 var _api = _interopRequireDefault(require("./api.module"));
 
-var _providers = require("../providers");
+var _channels = require("../channels");
 
 var _adapters = require("../adapters");
 
@@ -23,24 +23,24 @@ class JWTAuthModule extends _api.default {
   createDefaults() {
     var {
       store,
-      providers,
+      channels,
       adapters,
       strategies
     } = this;
 
-    if (providers.http == null) {
-      providers.http = _providers.http;
+    if (channels.http == null) {
+      channels.http = _channels.http;
     }
 
     if (adapters.auth == null) {
       adapters.auth = new _adapters.AuthAdapter({
-        providers
+        channels
       });
     }
 
     if (strategies.auth == null) {
       strategies.auth = new _strategies.JWTAuthStrategy({
-        store: store.auth
+        store
       });
     }
   }

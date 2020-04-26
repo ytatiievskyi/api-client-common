@@ -1,6 +1,6 @@
 {
   "name": "common-api-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "common structure to build api client",
   "main": "./build/index.js",
   "scripts": {
