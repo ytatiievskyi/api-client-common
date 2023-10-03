@@ -237,6 +237,6 @@ test('Http channel should be specified when creating a new AuthAdapter', async t
 
   const error = t.throws(() => {
     new AuthAdapter()
-  }, Error)
+  }, {instanceOf: Error})
   t.is(error.message, 'HTTP channel is required')
 })

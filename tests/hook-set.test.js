@@ -40,7 +40,7 @@ test('Handler should be a function when adding a new hook', async t => {
 
   const error = t.throws(() => {
     hooks.before('method1').add('something that is not a function')
-  }, TypeError)
+  }, {instanceOf: TypeError})
   t.is(error.message, 'function is required')
 })
 
@@ -49,12 +49,12 @@ test('Method name should be specified when adding or getting hooks', async t => 
 
   const error = t.throws(() => {
     hooks.before().add(() => {})
-  }, TypeError)
+  }, {instanceOf: TypeError})
   t.is(error.message, 'method name is required')
 
   const err = t.throws(() => {
     hooks.before().run(3)
-  }, TypeError)
+  }, {instanceOf: TypeError})
   t.is(err.message, 'method name is required')
 })
 
@@ -64,11 +64,11 @@ test('Method name should be registered before adding or getting hooks', async t 
 
   const error = t.throws(() => {
     hooks.before(method).add(() => {})
-  }, Error)
+  }, {instanceOf: Error})
   t.is(error.message, `method ${method} is not registered`)
 
   const err = t.throws(() => {
     hooks.before(method).run(3)
-  }, Error)
+  }, {instanceOf: Error})
   t.is(err.message, `method ${method} is not registered`)
 })
